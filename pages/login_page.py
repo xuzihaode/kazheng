@@ -10,19 +10,35 @@ class LoginPage(Base):
     loc_4 = ('xpath', "//body/div[@id='app']/div[1]/div[2]/div[1]/div[1]/div[1]/div[2]/div[4]/button[1]")    #立即登陆按钮
     loc5 = ('xpath',"//span[contains(text(),'欢迎光临')]")    #判断元素
 
-    def login(self,jigou='0229043000',username='xzh1',password='Aa123456!'):
+    def input_jigou(self,jigou):
+        '''输入机构号'''
+        self.send(self.loc_1,jigou)
+
+    def input_user(self,username):
+        '''输入账号'''
+        self.send(self.loc_2,username)
+
+    def input_psw(self,psw):
+        '''输入密码'''
+        self.send(self.loc_3,psw)
+
+    def click_button(self):
+        '''点击登陆按钮'''
+        self.click(self.loc_4)
+
+    def login(self,jigou='0229043000',username='xzh1',psw='Aa123456!'):
         '''登陆'''
         self.driver.get(login_url)
-        self.send(self.loc_1,jigou)
-        self.send(self.loc_2,username)
-        self.send(self.loc_3,password)
-        self.click(self.loc_4)
+        self.input_jigou(jigou)
+        self.input_user(username)
+        self.input_psw(psw)
+        self.click_button()
 
     def is_login_success(self):
         '''判断是否登陆成功，返回bool值'''
-
-        result = self.is_element_exist(self.loc_5)
-        return result
+        text = self.get_text(self.loc5)
+        print('登陆完成后，获取页面文本元素 %s'%text)
+        return text == '欢迎光临'
 
 if __name__ == '__main__':
     from selenium import webdriver
@@ -34,4 +50,5 @@ if __name__ == '__main__':
     #判断登陆
     result = web.is_login_success()
     print(result)
+    assert result
     driver.quit()
